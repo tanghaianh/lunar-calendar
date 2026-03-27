@@ -144,7 +144,6 @@ export default function LunarCalendar() {
   const activeD = selected?.day ?? todayD;
   const activeM = selected?.month ?? todayM;
   const activeY = selected?.year ?? todayY;
-  const isViewingToday = activeD === todayD && activeM === todayM && activeY === todayY;
 
   const activeLunar = solarToLunar(activeD, activeM, activeY);
   const yearCanChi = getYearCanChi(activeLunar.year);
@@ -227,52 +226,39 @@ export default function LunarCalendar() {
       `}</style>
 
       {/* ── TOP SECTION ── */}
-      <div style={{ padding: '24px 28px 20px', textAlign: 'center' }}>
-
+      <div style={{ padding: '14px 16px 12px', textAlign: 'center' }}>
 
         {/* Selected date indicator */}
-        {!isViewingToday && (
-          <div style={{ marginBottom: 8 }}>
-            <button
-              onClick={() => setSelected(null)}
-              style={{ fontSize: 11, color: '#888', background: '#f0e8dc', border: '1px solid #e5ddd0', borderRadius: 20, padding: '3px 10px', cursor: 'pointer' }}
-            >
-              ← Hôm nay
-            </button>
-          </div>
-        )}
 
         {/* Large solar day */}
-        <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1, color: activeDowColor, letterSpacing: -2 }}>
+        <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, color: activeDowColor, letterSpacing: -2 }}>
           {activeD}
         </div>
-        <div style={{ fontSize: 11, letterSpacing: 3, color: activeLabels.length ? activeDowColor : '#888', marginTop: 2, textTransform: 'uppercase', fontWeight: activeLabels.length ? 700 : 400 }}>
+        <div style={{ fontSize: 10, letterSpacing: 3, color: activeLabels.length ? activeDowColor : '#888', marginTop: 2, textTransform: 'uppercase', fontWeight: activeLabels.length ? 700 : 400 }}>
           {activeLabels.length
             ? <span className="label-pulse">{activeLabels.join(' • ')}</span>
             : 'Ngày Dương Lịch'}
         </div>
 
-        {/* Solar date full */}
-        <div style={{ fontSize: 18, fontWeight: 700, color: activeDowColor, marginTop: 10 }}>
+        {/* Solar + Lunar date inline */}
+        <div style={{ fontSize: 14, fontWeight: 700, color: activeDowColor, marginTop: 6 }}>
           Ngày {activeD} Tháng {activeM} Năm {activeY}
         </div>
-
-        {/* Lunar date as subtitle */}
-        <div style={{ fontSize: 14, color: activeDowColor, marginTop: 4 }}>
+        <div style={{ fontSize: 12, color: activeDowColor, marginTop: 2, opacity: 0.8 }}>
           Âm lịch: {activeLunar.day} Tháng {THANG_TEN[activeLunar.month - 1]}{activeLunar.isLeap ? ' (Nhuận)' : ''} • Năm {yearCanChi}
         </div>
 
-        {/* 2×2 Can Chi grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
+        {/* Can Chi — 4 cột 1 hàng */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, marginTop: 10 }}>
           {[
             { label: 'Năm', value: yearCanChi },
             { label: 'Tháng', value: monthCanChi },
             { label: 'Ngày', value: dayCanChi },
             { label: `Giờ ${hourInfo.name}`, value: hourInfo.canChi },
           ].map(({ label, value }) => (
-            <div key={label} style={{ border: '1px solid #e5ddd0', borderRadius: 8, padding: '10px 12px', background: '#fff8f0' }}>
-              <div style={{ fontSize: 10, letterSpacing: 2, color: '#999', textTransform: 'uppercase', marginBottom: 4 }}>{label}</div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: '#333' }}>{value}</div>
+            <div key={label} style={{ border: '1px solid #e5ddd0', borderRadius: 7, padding: '5px 4px', background: '#fff8f0' }}>
+              <div style={{ fontSize: 8, letterSpacing: 1, color: '#999', textTransform: 'uppercase', marginBottom: 2 }}>{label}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#333' }}>{value}</div>
             </div>
           ))}
         </div>
