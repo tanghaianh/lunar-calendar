@@ -1,0 +1,20 @@
+<svg width="100%" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    
+  </defs>
+
+  <!-- Wordmark centered -->
+  <text x="340" y="130" text-anchor="middle" font-family="'Sora', sans-serif" font-weight="800" font-size="88px" letter-spacing="-3px" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Sora, sans-serif;font-size:88px;font-weight:800;text-anchor:middle;dominant-baseline:auto">
+    <tspan fill="#7B5EA7" style="fill:rgb(123, 94, 167);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Sora, sans-serif;font-size:88px;font-weight:800;text-anchor:middle;dominant-baseline:auto">App</tspan><tspan fill="#1a1a2e" style="fill:rgb(26, 26, 46);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Sora, sans-serif;font-size:88px;font-weight:800;text-anchor:middle;dominant-baseline:auto">Plaza</tspan>
+  </text>
+
+  <!-- Accent line under "App" - centered: "App" ~3 chars, "Plaza" ~5 chars, total ~8 -->
+  <!-- At 88px Sora bold, ~"App" width ≈ 148px, starts at 340 - total/2 -->
+  <!-- total wordmark ~8 chars * ~52px = ~416px, starts at 340-208=132, App ends at 132+148=280 -->
+  <rect x="132" y="142" width="148" height="5" rx="2.5" fill="#7B5EA7" opacity="0.35" style="fill:rgb(123, 94, 167);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Tagline -->
+  <text x="340" y="178" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13px" letter-spacing="7px" fill="#9898bb" style="fill:rgb(152, 152, 187);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Space Grotesk&quot;, sans-serif;font-size:13px;font-weight:600;text-anchor:middle;dominant-baseline:auto">YOUR APP UNIVERSE</text>
+
+  
+</svg>
