@@ -97,6 +97,7 @@ export default function LunarCalendar() {
   const [now, setNow] = useState(() => new Date());
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => new Date().getMonth() + 1);
+  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 60_000);
@@ -108,11 +109,21 @@ export default function LunarCalendar() {
   const todayY = now.getFullYear();
   const todayHour = now.getHours();
 
-  const todayLunar = solarToLunar(todayD, todayM, todayY);
-  const yearCanChi = getYearCanChi(todayLunar.year);
-  const monthCanChi = getMonthCanChi(todayLunar.month, todayLunar.year);
-  const dayCanChi = getDayCanChi(todayD, todayM, todayY);
-  const hourInfo = getHourInfo(todayHour, todayD, todayM, todayY);
+  // Active date: selected day or today
+  const activeD = selected?.day ?? todayD;
+  const activeM = selected?.month ?? todayM;
+  const activeY = selected?.year ?? todayY;
+  const isViewingToday = activeD === todayD && activeM === todayM && activeY === todayY;
+
+  const activeLunar = solarToLunar(activeD, activeM, activeY);
+  const yearCanChi = getYearCanChi(activeLunar.year);
+  const monthCanChi = getMonthCanChi(activeLunar.month, activeLunar.year);
+  const dayCanChi = getDayCanChi(activeD, activeM, activeY);
+  const hourInfo = getHourInfo(todayHour, activeD, activeM, activeY);
+
+  // Color matching the calendar grid: CN=red, T7=blue, others=dark
+  const activeDow = new Date(activeY, activeM - 1, activeD).getDay(); // 0=Sun, 6=Sat
+  const activeDowColor = activeDow === 0 ? '#c8302a' : activeDow === 6 ? '#1a6ac8' : '#222';
 
   // Subtitle for calendar section — lunar month of the 1st day of viewed month
   const firstLunar = solarToLunar(1, viewMonth, viewYear);
@@ -131,9 +142,24 @@ export default function LunarCalendar() {
   function goToday() {
     setViewYear(todayY);
     setViewMonth(todayM);
+    setSelected(null);
+  }
+
+  function handleCellClick(cell: CalendarCell) {
+    const isSame = selected?.day === cell.solarDay && selected.month === cell.solarMonth && selected.year === cell.solarYear;
+    if (isSame) {
+      setSelected(null);
+    } else {
+      setSelected({ day: cell.solarDay, month: cell.solarMonth, year: cell.solarYear });
+      if (!cell.inCurrentMonth) {
+        setViewYear(cell.solarYear);
+        setViewMonth(cell.solarMonth);
+      }
+    }
   }
 
   const isToday = (d: number, m: number, y: number) => d === todayD && m === todayM && y === todayY;
+  const isSelected = (d: number, m: number, y: number) => selected?.day === d && selected.month === m && selected.year === y;
 
   return (
     <div style={{ background: '#faf7f2', borderRadius: 16, maxWidth: 420, width: '100%', fontFamily: 'Arial, sans-serif', boxShadow: '0 2px 24px rgba(0,0,0,0.08)' }}>
@@ -163,22 +189,34 @@ export default function LunarCalendar() {
           <Image src="/appplaza_logo_wordmark.svg" alt="AppPlaza" width={140} height={70} style={{ objectFit: 'contain' }} />
         </div>
 
+        {/* Selected date indicator */}
+        {!isViewingToday && (
+          <div style={{ marginBottom: 8 }}>
+            <button
+              onClick={() => setSelected(null)}
+              style={{ fontSize: 11, color: '#888', background: '#f0e8dc', border: '1px solid #e5ddd0', borderRadius: 20, padding: '3px 10px', cursor: 'pointer' }}
+            >
+              ← Hôm nay
+            </button>
+          </div>
+        )}
+
         {/* Large solar day */}
-        <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1, color: '#c8302a', letterSpacing: -2 }}>
-          {todayD}
+        <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1, color: activeDowColor, letterSpacing: -2 }}>
+          {activeD}
         </div>
         <div style={{ fontSize: 11, letterSpacing: 3, color: '#888', marginTop: 2, textTransform: 'uppercase' }}>
           Ngày Dương Lịch
         </div>
 
         {/* Solar date full */}
-        <div style={{ fontSize: 18, fontWeight: 700, color: '#222', marginTop: 10 }}>
-          Ngày {todayD} Tháng {todayM} Năm {todayY}
+        <div style={{ fontSize: 18, fontWeight: 700, color: activeDowColor, marginTop: 10 }}>
+          Ngày {activeD} Tháng {activeM} Năm {activeY}
         </div>
 
         {/* Lunar date as subtitle */}
-        <div style={{ fontSize: 14, color: '#c8302a', marginTop: 4 }}>
-          Âm lịch: {todayLunar.day} Tháng {THANG_TEN[todayLunar.month - 1]}{todayLunar.isLeap ? ' (Nhuận)' : ''} • Năm {yearCanChi}
+        <div style={{ fontSize: 14, color: activeDowColor, marginTop: 4 }}>
+          Âm lịch: {activeLunar.day} Tháng {THANG_TEN[activeLunar.month - 1]}{activeLunar.isLeap ? ' (Nhuận)' : ''} • Năm {yearCanChi}
         </div>
 
         {/* 2×2 Can Chi grid */}
@@ -250,23 +288,33 @@ export default function LunarCalendar() {
               else if (isSaturday) solarColor = '#1a6ac8';
               else solarColor = '#222';
             }
+            const sel = isSelected(cell.solarDay, cell.solarMonth, cell.solarYear);
             let lunarColor = cell.inCurrentMonth ? (isFirstLunarDay ? '#c8302a' : '#888') : '#ddd';
             let holidayColor = '#c8302a';
 
             if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; holidayColor = 'rgba(255,200,200,0.9)'; }
+            if (sel && !today) { solarColor = '#7B5EA7'; lunarColor = '#a08bc0'; holidayColor = '#9b6fbf'; }
+
+            let cellBg = 'transparent';
+            if (today) cellBg = '#8b1a1a';
+            else if (sel) cellBg = '#f0eaf8';
 
             return (
               <div
                 key={idx}
+                onClick={() => handleCellClick(cell)}
                 style={{
                   textAlign: 'center',
                   padding: '6px 2px',
                   borderRadius: 6,
-                  background: today ? '#8b1a1a' : 'transparent',
-                  cursor: 'default',
+                  background: cellBg,
+                  cursor: 'pointer',
+                  outline: sel && !today ? '2px solid #7B5EA7' : 'none',
+                  outlineOffset: -2,
+                  transition: 'background 0.15s',
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: today ? 700 : 500, color: solarColor, lineHeight: 1.2 }}>
+                <div style={{ fontSize: 15, fontWeight: today || sel ? 700 : 500, color: solarColor, lineHeight: 1.2 }}>
                   {cell.solarDay}
                 </div>
                 <div style={{ fontSize: 10, color: lunarColor, lineHeight: 1.2, fontWeight: isFirstLunarDay && !today ? 600 : 400 }}>
