@@ -1,6 +1,6 @@
 [
   { "name": "Ngày Valentine",        "type": "solar", "repeat": "yearly", "month": 2,  "day": 14 },
-  { "name": "Tay's birthday",        "type": "solar", "repeat": "yearly", "month": 3,  "day": 15 },
+  { "name": "Tây's birthday",        "type": "solar", "repeat": "yearly", "month": 3,  "day": 15 },
   { "name": "Bà nội's birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 23 },
   { "name": "Kem's birthday",        "type": "solar", "repeat": "yearly", "month": 4,  "day": 28 },
   { "name": "Bi's birthday",         "type": "solar", "repeat": "yearly", "month": 4,  "day": 30 },

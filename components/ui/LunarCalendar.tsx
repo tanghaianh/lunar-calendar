@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import {
   solarToLunar,
@@ -217,17 +216,19 @@ export default function LunarCalendar() {
           vertical-align: middle;
           line-height: 1;
         }
+        @keyframes label-pulse {
+          0%, 100% { opacity: 1;   transform: scale(1); }
+          50%       { opacity: 0.6; transform: scale(1.06); }
+        }
+        .label-pulse {
+          display: inline-block;
+          animation: label-pulse 2s ease-in-out infinite;
+        }
       `}</style>
 
       {/* ── TOP SECTION ── */}
       <div style={{ padding: '24px 28px 20px', textAlign: 'center' }}>
 
-        {/* Logo */}
-        <div style={{ marginBottom: 16 }}>
-          <a href="https://www.appplaza.net/" target="_blank" rel="noopener noreferrer">
-            <Image src="/appplaza_logo_wordmark.svg" alt="AppPlaza" width={140} height={70} style={{ objectFit: 'contain' }} />
-          </a>
-        </div>
 
         {/* Selected date indicator */}
         {!isViewingToday && (
@@ -246,7 +247,9 @@ export default function LunarCalendar() {
           {activeD}
         </div>
         <div style={{ fontSize: 11, letterSpacing: 3, color: activeLabels.length ? activeDowColor : '#888', marginTop: 2, textTransform: 'uppercase', fontWeight: activeLabels.length ? 700 : 400 }}>
-          {activeLabels.length ? activeLabels.join(' • ') : 'Ngày Dương Lịch'}
+          {activeLabels.length
+            ? <span className="label-pulse">{activeLabels.join(' • ')}</span>
+            : 'Ngày Dương Lịch'}
         </div>
 
         {/* Solar date full */}
