@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   solarToLunar,
   getYearCanChi,
@@ -104,6 +104,94 @@ function buildCalendarCells(year: number, month: number): CalendarCell[] {
   return cells;
 }
 
+function FireworksCanvas({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const parent = canvas.parentElement;
+    if (!parent) return;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
+
+    type Particle = {
+      x: number; y: number;
+      vx: number; vy: number;
+      life: number; maxLife: number;
+      color: string; size: number;
+    };
+
+    const COLORS = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff9f43', '#a29bfe', '#ff85c2', '#00cec9'];
+    const particles: Particle[] = [];
+    let nextBurst = 0;
+    let frameId: number;
+
+    function createBurst() {
+      const x = 20 + Math.random() * (canvas!.width - 40);
+      const y = 10 + Math.random() * (canvas!.height * 0.55);
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      for (let i = 0; i < 22; i++) {
+        const angle = (i / 22) * Math.PI * 2;
+        const speed = 1.2 + Math.random() * 2.8;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 0.8,
+          life: 1,
+          maxLife: 45 + Math.random() * 35,
+          color,
+          size: 1.5 + Math.random() * 2,
+        });
+      }
+    }
+
+    function tick(t: number) {
+      if (t > nextBurst) {
+        createBurst();
+        nextBurst = t + 1000 + Math.random() * 1000;
+      }
+
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.06;
+        p.vx *= 0.98;
+        p.life -= 1 / p.maxLife;
+
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+        ctx!.globalAlpha = p.life;
+        ctx!.fillStyle = p.color;
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+
+      ctx!.globalAlpha = 1;
+      frameId = requestAnimationFrame(tick);
+    }
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [active]);
+
+  if (!active) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: '16px 16px 0 0' }}
+    />
+  );
+}
+
 function getHolidayName(cell: CalendarCell): string | null {
   const { solarDay, solarMonth, solarYear, lunarDay, lunarMonth } = cell;
 
@@ -162,6 +250,7 @@ export default function LunarCalendar() {
   const activeHoliday = getHolidayName(activeCell);
   const activeEvents = getEvents(activeD, activeM, activeY, activeLunar.day, activeLunar.month);
   const activeLabels = [activeHoliday, ...activeEvents.map(e => e.name)].filter(Boolean) as string[];
+  const hasBirthday = activeEvents.some(e => e.eventType === 'birthday');
 
   // Color matching the calendar grid: CN=red, T7=blue, others=dark
   const activeDow = new Date(activeY, activeM - 1, activeD).getDay(); // 0=Sun, 6=Sat
@@ -232,7 +321,8 @@ export default function LunarCalendar() {
       `}</style>
 
       {/* ── TOP SECTION ── */}
-      <div style={{ padding: '14px 16px 12px', textAlign: 'center' }}>
+      <div style={{ position: 'relative', padding: '14px 16px 12px', textAlign: 'center', overflow: 'hidden' }}>
+        <FireworksCanvas active={hasBirthday} />
 
         {/* Selected date indicator */}
 
