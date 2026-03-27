@@ -10,6 +10,37 @@ import {
   getHourInfo,
   THANG_TEN,
 } from '@/lib/lunar-calendar';
+import eventsConfig from '@/config/events.json';
+
+interface EventConfig {
+  name: string;
+  type: 'solar' | 'lunar';
+  repeat: 'yearly' | 'once';
+  month: number;
+  day: number;
+  year?: number;
+}
+
+const EVENTS: EventConfig[] = eventsConfig as EventConfig[];
+
+function getEventNames(
+  solarDay: number, solarMonth: number, solarYear: number,
+  lunarDay: number, lunarMonth: number,
+): string[] {
+  return EVENTS
+    .filter(e => {
+      if (e.type === 'solar') {
+        return e.repeat === 'yearly'
+          ? e.month === solarMonth && e.day === solarDay
+          : e.year === solarYear && e.month === solarMonth && e.day === solarDay;
+      }
+      // lunar
+      return e.repeat === 'yearly'
+        ? e.month === lunarMonth && e.day === lunarDay
+        : e.year === solarYear && e.month === lunarMonth && e.day === lunarDay;
+    })
+    .map(e => e.name);
+}
 
 const DOW = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
@@ -98,6 +129,7 @@ export default function LunarCalendar() {
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => new Date().getMonth() + 1);
   const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 60_000);
@@ -120,6 +152,12 @@ export default function LunarCalendar() {
   const monthCanChi = getMonthCanChi(activeLunar.month, activeLunar.year);
   const dayCanChi = getDayCanChi(activeD, activeM, activeY);
   const hourInfo = getHourInfo(todayHour, activeD, activeM, activeY);
+
+  // Holiday + event labels for active date (used in top section)
+  const activeCell = { solarDay: activeD, solarMonth: activeM, solarYear: activeY, lunarDay: activeLunar.day, lunarMonth: activeLunar.month, isLeap: activeLunar.isLeap, inCurrentMonth: true };
+  const activeHoliday = getHolidayName(activeCell);
+  const activeEvents = getEventNames(activeD, activeM, activeY, activeLunar.day, activeLunar.month);
+  const activeLabels = [activeHoliday, ...activeEvents].filter(Boolean) as string[];
 
   // Color matching the calendar grid: CN=red, T7=blue, others=dark
   const activeDow = new Date(activeY, activeM - 1, activeD).getDay(); // 0=Sun, 6=Sat
@@ -207,8 +245,8 @@ export default function LunarCalendar() {
         <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1, color: activeDowColor, letterSpacing: -2 }}>
           {activeD}
         </div>
-        <div style={{ fontSize: 11, letterSpacing: 3, color: '#888', marginTop: 2, textTransform: 'uppercase' }}>
-          Ngày Dương Lịch
+        <div style={{ fontSize: 11, letterSpacing: 3, color: activeLabels.length ? activeDowColor : '#888', marginTop: 2, textTransform: 'uppercase', fontWeight: activeLabels.length ? 700 : 400 }}>
+          {activeLabels.length ? activeLabels.join(' • ') : 'Ngày Dương Lịch'}
         </div>
 
         {/* Solar date full */}
@@ -283,6 +321,9 @@ export default function LunarCalendar() {
             const isSaturday = col === 5;
             const isFirstLunarDay = cell.lunarDay === 1;
             const holiday = cell.inCurrentMonth ? getHolidayName(cell) : null;
+            const events = cell.inCurrentMonth ? getEventNames(cell.solarDay, cell.solarMonth, cell.solarYear, cell.lunarDay, cell.lunarMonth) : [];
+            const allLabels = [holiday, ...events].filter(Boolean) as string[];
+            const tooltipText = allLabels.length > 0 ? allLabels.join(' • ') : null;
 
             let solarColor = '#ccc';
             if (cell.inCurrentMonth) {
@@ -292,20 +333,26 @@ export default function LunarCalendar() {
             }
             const sel = isSelected(cell.solarDay, cell.solarMonth, cell.solarYear);
             let lunarColor = cell.inCurrentMonth ? (isFirstLunarDay ? '#c8302a' : '#888') : '#ddd';
-            let holidayColor = '#c8302a';
+            let labelColor = '#c8302a';
+            let eventColor = '#e07b20';
 
-            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; holidayColor = 'rgba(255,200,200,0.9)'; }
-            if (sel && !today) { solarColor = '#7B5EA7'; lunarColor = '#a08bc0'; holidayColor = '#9b6fbf'; }
+            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; labelColor = 'rgba(255,200,200,0.9)'; eventColor = 'rgba(255,220,180,0.9)'; }
+            if (sel && !today) { solarColor = '#7B5EA7'; lunarColor = '#a08bc0'; labelColor = '#9b6fbf'; eventColor = '#9b6fbf'; }
 
             let cellBg = 'transparent';
             if (today) cellBg = '#8b1a1a';
             else if (sel) cellBg = '#f0eaf8';
 
+            const isHovered = hoveredIdx === idx;
+
             return (
               <div
                 key={idx}
                 onClick={() => handleCellClick(cell)}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
                 style={{
+                  position: 'relative',
                   textAlign: 'center',
                   padding: '6px 2px',
                   borderRadius: 6,
@@ -316,6 +363,19 @@ export default function LunarCalendar() {
                   transition: 'background 0.15s',
                 }}
               >
+                {/* Tooltip */}
+                {isHovered && tooltipText && (
+                  <div style={{
+                    position: 'absolute', bottom: 'calc(100% + 4px)', left: '50%',
+                    transform: 'translateX(-50%)', background: '#222', color: '#fff',
+                    fontSize: 10, padding: '4px 8px', borderRadius: 5, whiteSpace: 'nowrap',
+                    zIndex: 20, pointerEvents: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    lineHeight: 1.5,
+                  }}>
+                    {allLabels.map((l, i) => <div key={i}>{l}</div>)}
+                  </div>
+                )}
+
                 <div style={{ fontSize: 15, fontWeight: today || sel ? 700 : 500, color: solarColor, lineHeight: 1.2 }}>
                   {cell.solarDay}
                 </div>
@@ -323,10 +383,15 @@ export default function LunarCalendar() {
                   {isFirstLunarDay ? `1/${cell.lunarMonth}` : cell.lunarDay}
                 </div>
                 {holiday && (
-                  <div style={{ fontSize: 7, color: holidayColor, lineHeight: 1.2, marginTop: 1, fontWeight: 600, wordBreak: 'break-word' }}>
+                  <div style={{ fontSize: 7, color: labelColor, lineHeight: 1.2, marginTop: 1, fontWeight: 600, wordBreak: 'break-word' }}>
                     {holiday}
                   </div>
                 )}
+                {events.map((ev, i) => (
+                  <div key={i} style={{ fontSize: 7, color: eventColor, lineHeight: 1.2, marginTop: 1, fontWeight: 600, wordBreak: 'break-word' }}>
+                    {ev}
+                  </div>
+                ))}
               </div>
             );
           })}

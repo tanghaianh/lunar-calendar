@@ -1,0 +1,19 @@
+[
+  { "name": "Ngày Valentine",        "type": "solar", "repeat": "yearly", "month": 2,  "day": 14 },
+  { "name": "Tay's birthday",        "type": "solar", "repeat": "yearly", "month": 3,  "day": 15 },
+  { "name": "Bà nội's birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 23 },
+  { "name": "Kem's birthday",        "type": "solar", "repeat": "yearly", "month": 4,  "day": 28 },
+  { "name": "Bi's birthday",         "type": "solar", "repeat": "yearly", "month": 4,  "day": 30 },
+  { "name": "Ông nội's birthday",    "type": "solar", "repeat": "yearly", "month": 7,  "day": 1  },
+  { "name": "Wedding anniversary",   "type": "solar", "repeat": "yearly", "month": 7,  "day": 16 },
+  { "name": "bác Nhung's birthday",  "type": "solar", "repeat": "yearly", "month": 7,  "day": 25 },
+  { "name": "bác Thắng's birthday",  "type": "solar", "repeat": "yearly", "month": 8,  "day": 13 },
+  { "name": "Hiếu's birthday",       "type": "solar", "repeat": "yearly", "month": 10, "day": 17 },
+  { "name": "Bảo bối's birthday",    "type": "solar", "repeat": "yearly", "month": 10, "day": 24 },
+  { "name": "Alex's birthday",       "type": "solar", "repeat": "yearly", "month": 10, "day": 25 },
+  { "name": "Rằm tháng Giêng",       "type": "lunar", "repeat": "yearly", "month": 1,  "day": 15 },
+  { "name": "Rằm tháng Bảy",         "type": "lunar", "repeat": "yearly", "month": 7,  "day": 15 },
+  { "name": "Tết Trung Thu",          "type": "lunar", "repeat": "yearly", "month": 8,  "day": 15 },
+  { "name": "Lễ Ông Táo",             "type": "lunar", "repeat": "yearly", "month": 12, "day": 23 },
+  { "name": "Wedding",               "type": "solar", "repeat": "once",   "year": 2013, "month": 7, "day": 13 }
+]
