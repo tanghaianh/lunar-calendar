@@ -186,7 +186,9 @@ export default function LunarCalendar() {
 
         {/* Logo */}
         <div style={{ marginBottom: 16 }}>
-          <Image src="/appplaza_logo_wordmark.svg" alt="AppPlaza" width={140} height={70} style={{ objectFit: 'contain' }} />
+          <a href="https://www.appplaza.net/" target="_blank" rel="noopener noreferrer">
+            <Image src="/appplaza_logo_wordmark.svg" alt="AppPlaza" width={140} height={70} style={{ objectFit: 'contain' }} />
+          </a>
         </div>
 
         {/* Selected date indicator */}
@@ -335,7 +337,7 @@ export default function LunarCalendar() {
           Tính theo múi giờ UTC+7 (Việt Nam)
         </div>
         <div style={{ textAlign: 'center', marginTop: 6, fontSize: '0.62rem', letterSpacing: '0.07em', color: '#888', opacity: 0.75 }}>
-          From <strong style={{ fontWeight: 800 }}><span style={{ color: '#7B5EA7' }}>App</span><span style={{ color: '#1a1a2e' }}>Plaza</span></strong> with <span className="heart">❤</span>
+          From <a href="https://www.appplaza.net/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}><strong style={{ fontWeight: 800 }}><span style={{ color: '#7B5EA7' }}>App</span><span style={{ color: '#1a1a2e' }}>Plaza</span></strong></a> with <span className="heart">❤</span>
         </div>
       </div>
     </div>
