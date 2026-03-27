@@ -13,6 +13,7 @@ import eventsConfig from '@/config/events.json';
 
 interface EventConfig {
   name: string;
+  eventType: 'birthday' | 'anniversary' | 'anniversary_of_death' | 'other';
   type: 'solar' | 'lunar';
   repeat: 'yearly' | 'once';
   month: number;
@@ -20,12 +21,17 @@ interface EventConfig {
   year?: number;
 }
 
+interface EventEntry {
+  name: string;
+  eventType: string;
+}
+
 const EVENTS: EventConfig[] = eventsConfig as EventConfig[];
 
-function getEventNames(
+function getEvents(
   solarDay: number, solarMonth: number, solarYear: number,
   lunarDay: number, lunarMonth: number,
-): string[] {
+): EventEntry[] {
   return EVENTS
     .filter(e => {
       if (e.type === 'solar') {
@@ -38,7 +44,7 @@ function getEventNames(
         ? e.month === lunarMonth && e.day === lunarDay
         : e.year === solarYear && e.month === lunarMonth && e.day === lunarDay;
     })
-    .map(e => e.name);
+    .map(e => ({ name: e.name, eventType: e.eventType }));
 }
 
 const DOW = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
@@ -154,8 +160,8 @@ export default function LunarCalendar() {
   // Holiday + event labels for active date (used in top section)
   const activeCell = { solarDay: activeD, solarMonth: activeM, solarYear: activeY, lunarDay: activeLunar.day, lunarMonth: activeLunar.month, isLeap: activeLunar.isLeap, inCurrentMonth: true };
   const activeHoliday = getHolidayName(activeCell);
-  const activeEvents = getEventNames(activeD, activeM, activeY, activeLunar.day, activeLunar.month);
-  const activeLabels = [activeHoliday, ...activeEvents].filter(Boolean) as string[];
+  const activeEvents = getEvents(activeD, activeM, activeY, activeLunar.day, activeLunar.month);
+  const activeLabels = [activeHoliday, ...activeEvents.map(e => e.name)].filter(Boolean) as string[];
 
   // Color matching the calendar grid: CN=red, T7=blue, others=dark
   const activeDow = new Date(activeY, activeM - 1, activeD).getDay(); // 0=Sun, 6=Sat
@@ -236,7 +242,15 @@ export default function LunarCalendar() {
         </div>
         <div style={{ fontSize: 10, letterSpacing: 3, color: activeLabels.length ? activeDowColor : '#888', marginTop: 2, textTransform: 'uppercase', fontWeight: activeLabels.length ? 700 : 400 }}>
           {activeLabels.length
-            ? <span className="label-pulse">{activeLabels.join(' • ')}</span>
+            ? (
+              <span className="label-pulse" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                {activeEvents.map((e, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={i} src={`/icons/${e.eventType}.svg`} alt="" width={14} height={14} style={{ verticalAlign: 'middle', flexShrink: 0 }} />
+                ))}
+                {activeLabels.join(' • ')}
+              </span>
+            )
             : 'Ngày Dương Lịch'}
         </div>
 
@@ -292,9 +306,9 @@ export default function LunarCalendar() {
         {/* Day-of-week headers */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginTop: 12, marginBottom: 4 }}>
           {DOW.map((d, i) => {
-            const color = i === 6 ? '#c8302a' : i === 5 ? '#1a6ac8' : '#888';
+            const color = i === 6 ? '#c8302a' : i === 5 ? '#1a6ac8' : '#555';
             return (
-              <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 700, letterSpacing: 1, color, padding: '4px 0' }}>
+              <div key={d} style={{ textAlign: 'center', fontSize: 12, fontWeight: 900, letterSpacing: 1, color, padding: '4px 0' }}>
                 {d}
               </div>
             );
@@ -310,8 +324,8 @@ export default function LunarCalendar() {
             const isSaturday = col === 5;
             const isFirstLunarDay = cell.lunarDay === 1;
             const holiday = cell.inCurrentMonth ? getHolidayName(cell) : null;
-            const events = cell.inCurrentMonth ? getEventNames(cell.solarDay, cell.solarMonth, cell.solarYear, cell.lunarDay, cell.lunarMonth) : [];
-            const allLabels = [holiday, ...events].filter(Boolean) as string[];
+            const events = cell.inCurrentMonth ? getEvents(cell.solarDay, cell.solarMonth, cell.solarYear, cell.lunarDay, cell.lunarMonth) : [];
+            const allLabels = [holiday, ...events.map(e => e.name)].filter(Boolean) as string[];
             const tooltipText = allLabels.length > 0 ? allLabels.join(' • ') : null;
 
             let solarColor = '#ccc';
@@ -323,10 +337,9 @@ export default function LunarCalendar() {
             const sel = isSelected(cell.solarDay, cell.solarMonth, cell.solarYear);
             let lunarColor = cell.inCurrentMonth ? (isFirstLunarDay ? '#c8302a' : '#888') : '#ddd';
             let labelColor = '#c8302a';
-            let eventColor = '#e07b20';
 
-            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; labelColor = 'rgba(255,200,200,0.9)'; eventColor = 'rgba(255,220,180,0.9)'; }
-            if (sel && !today) { solarColor = '#7B5EA7'; lunarColor = '#a08bc0'; labelColor = '#9b6fbf'; eventColor = '#9b6fbf'; }
+            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; labelColor = 'rgba(255,200,200,0.9)'; }
+            if (sel && !today) { solarColor = '#7B5EA7'; lunarColor = '#a08bc0'; labelColor = '#9b6fbf'; }
 
             let cellBg = 'transparent';
             if (today) cellBg = '#8b1a1a';
@@ -376,11 +389,15 @@ export default function LunarCalendar() {
                     {holiday}
                   </div>
                 )}
-                {events.map((ev, i) => (
-                  <div key={i} style={{ fontSize: 7, color: eventColor, lineHeight: 1.2, marginTop: 1, fontWeight: 600, wordBreak: 'break-word' }}>
-                    {ev}
+                {events.length > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 1, marginTop: 2, flexWrap: 'wrap' }}>
+                    {events.map((ev, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={i} src={`/icons/${ev.eventType}.svg`} alt="" width={9} height={9}
+                        style={{ filter: today ? 'brightness(0) invert(1)' : 'none' }} />
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             );
           })}

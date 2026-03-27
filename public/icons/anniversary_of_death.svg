@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+  <!-- left stick -->
+  <rect x="3.5" y="6" width="1.5" height="11" rx="0.75" fill="#c8a46a"/>
+  <!-- center stick -->
+  <rect x="9.25" y="4" width="1.5" height="13" rx="0.75" fill="#c8a46a"/>
+  <!-- right stick -->
+  <rect x="15" y="6" width="1.5" height="11" rx="0.75" fill="#c8a46a"/>
+  <!-- left ember -->
+  <circle cx="4.25" cy="6" r="1.2" fill="#e8562a"/>
+  <!-- center ember -->
+  <circle cx="10" cy="4" r="1.2" fill="#e8562a"/>
+  <!-- right ember -->
+  <circle cx="15.75" cy="6" r="1.2" fill="#e8562a"/>
+  <!-- left smoke -->
+  <path d="M4.25 4.5 C3.5 3.5 5 2.5 4.25 1.5" stroke="#aaa" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  <!-- center smoke -->
+  <path d="M10 2.5 C9.2 1.5 10.8 0.5 10 -0.5" stroke="#aaa" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  <!-- right smoke -->
+  <path d="M15.75 4.5 C15 3.5 16.5 2.5 15.75 1.5" stroke="#aaa" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  <!-- base/holder -->
+  <rect x="2" y="17" width="16" height="2" rx="1" fill="#8B6914"/>
+</svg>
