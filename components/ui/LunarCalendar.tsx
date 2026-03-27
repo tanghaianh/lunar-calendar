@@ -192,6 +192,108 @@ function FireworksCanvas({ active }: { active: boolean }) {
   );
 }
 
+function BalloonsCanvas({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const parent = canvas.parentElement;
+    if (!parent) return;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
+
+    type Balloon = {
+      x: number; y: number;
+      vy: number; phase: number;
+      color: string; rx: number; ry: number;
+      age: number; maxAge: number;
+    };
+
+    const COLORS = ['#ff6b9d', '#ff4d6d', '#ff85c2', '#c77dff', '#e63946', '#ff9f1c', '#f72585', '#ff6b6b'];
+    const balloons: Balloon[] = [];
+    let nextSpawn = 0;
+    let frameId: number;
+
+    function createBalloon() {
+      const rx = 7 + Math.random() * 6;
+      const vy = 0.7 + Math.random() * 0.8;
+      balloons.push({
+        x: rx + Math.random() * (canvas!.width - rx * 2),
+        y: canvas!.height + 30,
+        vy,
+        phase: Math.random() * Math.PI * 2,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rx, ry: rx * 1.3,
+        age: 0,
+        maxAge: (canvas!.height + 60) / vy * 1.2,
+      });
+    }
+
+    function drawBalloon(b: Balloon, alpha: number) {
+      const { x, y, rx, ry, color } = b;
+      ctx!.globalAlpha = alpha;
+      // Body
+      ctx!.beginPath();
+      ctx!.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx!.fillStyle = color;
+      ctx!.fill();
+      // Highlight
+      ctx!.beginPath();
+      ctx!.ellipse(x - rx * 0.3, y - ry * 0.3, rx * 0.25, ry * 0.2, -0.3, 0, Math.PI * 2);
+      ctx!.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx!.fill();
+      // Knot
+      ctx!.beginPath();
+      ctx!.arc(x, y + ry, 2, 0, Math.PI * 2);
+      ctx!.fillStyle = color;
+      ctx!.fill();
+      // String
+      ctx!.beginPath();
+      ctx!.moveTo(x, y + ry + 2);
+      ctx!.quadraticCurveTo(x + 5, y + ry + 12, x - 2, y + ry + 22);
+      ctx!.strokeStyle = 'rgba(120,80,80,0.45)';
+      ctx!.lineWidth = 0.8;
+      ctx!.stroke();
+      ctx!.globalAlpha = 1;
+    }
+
+    function tick(t: number) {
+      if (t > nextSpawn) {
+        createBalloon();
+        nextSpawn = t + 350 + Math.random() * 550;
+      }
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      for (let i = balloons.length - 1; i >= 0; i--) {
+        const b = balloons[i];
+        b.age++;
+        b.y -= b.vy;
+        b.x += Math.sin(b.age * 0.035 + b.phase) * 0.45;
+        const lifeRatio = b.age / b.maxAge;
+        if (lifeRatio >= 1 || b.y < -50) { balloons.splice(i, 1); continue; }
+        const alpha = lifeRatio > 0.8 ? (1 - lifeRatio) / 0.2 : 1;
+        drawBalloon(b, alpha);
+      }
+      frameId = requestAnimationFrame(tick);
+    }
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [active]);
+
+  if (!active) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: '16px 16px 0 0' }}
+    />
+  );
+}
+
 function getHolidayName(cell: CalendarCell): string | null {
   const { solarDay, solarMonth, solarYear, lunarDay, lunarMonth } = cell;
 
@@ -251,6 +353,7 @@ export default function LunarCalendar() {
   const activeEvents = getEvents(activeD, activeM, activeY, activeLunar.day, activeLunar.month);
   const activeLabels = [activeHoliday, ...activeEvents.map(e => e.name)].filter(Boolean) as string[];
   const hasBirthday = activeEvents.some(e => e.eventType === 'birthday');
+  const hasAnniversary = activeEvents.some(e => e.eventType === 'anniversary');
 
   // Color matching the calendar grid: CN=red, T7=blue, others=dark
   const activeDow = new Date(activeY, activeM - 1, activeD).getDay(); // 0=Sun, 6=Sat
@@ -323,6 +426,7 @@ export default function LunarCalendar() {
       {/* ── TOP SECTION ── */}
       <div style={{ position: 'relative', padding: '14px 16px 12px', textAlign: 'center', overflow: 'hidden' }}>
         <FireworksCanvas active={hasBirthday} />
+        <BalloonsCanvas active={hasAnniversary} />
 
         {/* Selected date indicator */}
 
