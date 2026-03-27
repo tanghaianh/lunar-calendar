@@ -68,6 +68,31 @@ function buildCalendarCells(year: number, month: number): CalendarCell[] {
   return cells;
 }
 
+function getHolidayName(cell: CalendarCell): string | null {
+  const { solarDay, solarMonth, solarYear, lunarDay, lunarMonth } = cell;
+
+  // Solar holidays
+  if (solarMonth === 1 && solarDay === 1)  return 'Năm Mới';
+  if (solarMonth === 4 && solarDay === 30) return 'Giải Phóng';
+  if (solarMonth === 5 && solarDay === 1)  return 'Lao Động';
+  if (solarMonth === 9 && solarDay === 2)  return 'Quốc Khánh';
+
+  // Lunar holidays
+  if (lunarMonth === 3 && lunarDay === 10) return 'Giỗ Tổ HV';
+  if (lunarMonth === 1 && lunarDay === 1)  return 'Mùng 1 Tết';
+  if (lunarMonth === 1 && lunarDay === 2)  return 'Mùng 2 Tết';
+  if (lunarMonth === 1 && lunarDay === 3)  return 'Mùng 3 Tết';
+
+  // Giao Thừa: last day of lunar month 12 (có thể là ngày 29 hoặc 30)
+  if (lunarMonth === 12 && lunarDay >= 29) {
+    const next = new Date(solarYear, solarMonth - 1, solarDay + 1);
+    const nextLunar = solarToLunar(next.getDate(), next.getMonth() + 1, next.getFullYear());
+    if (nextLunar.month === 1 && nextLunar.day === 1) return 'Giao Thừa';
+  }
+
+  return null;
+}
+
 export default function LunarCalendar() {
   const [now, setNow] = useState(() => new Date());
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
@@ -217,6 +242,7 @@ export default function LunarCalendar() {
             const isSunday = col === 6;
             const isSaturday = col === 5;
             const isFirstLunarDay = cell.lunarDay === 1;
+            const holiday = cell.inCurrentMonth ? getHolidayName(cell) : null;
 
             let solarColor = '#ccc';
             if (cell.inCurrentMonth) {
@@ -225,8 +251,9 @@ export default function LunarCalendar() {
               else solarColor = '#222';
             }
             let lunarColor = cell.inCurrentMonth ? (isFirstLunarDay ? '#c8302a' : '#888') : '#ddd';
+            let holidayColor = '#c8302a';
 
-            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; }
+            if (today) { solarColor = '#fff'; lunarColor = 'rgba(255,255,255,0.8)'; holidayColor = 'rgba(255,200,200,0.9)'; }
 
             return (
               <div
@@ -245,6 +272,11 @@ export default function LunarCalendar() {
                 <div style={{ fontSize: 10, color: lunarColor, lineHeight: 1.2, fontWeight: isFirstLunarDay && !today ? 600 : 400 }}>
                   {isFirstLunarDay ? `1/${cell.lunarMonth}` : cell.lunarDay}
                 </div>
+                {holiday && (
+                  <div style={{ fontSize: 7, color: holidayColor, lineHeight: 1.2, marginTop: 1, fontWeight: 600, wordBreak: 'break-word' }}>
+                    {holiday}
+                  </div>
+                )}
               </div>
             );
           })}
