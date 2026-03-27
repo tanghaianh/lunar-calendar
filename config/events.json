@@ -1,30 +1,227 @@
 [
-  { "name": "Bà ngoại's birthday",          "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 2,  "day": 7  },
-  { "name": "Ngày Valentine",               "eventType": "other",  "type": "solar", "repeat": "yearly", "month": 2,  "day": 14 },
-  { "name": "Cốm's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 2,  "day": 19 },
-  { "name": "Bin's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 2,  "day": 27 },
-  { "name": "Tây's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 3,  "day": 15 },
-  { "name": "Ông ngoại's birthday",         "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 3,  "day": 23 },
-  { "name": "Bob's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 3,  "day": 26 },
-  { "name": "Thanh's birthday",             "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 13 },
-  { "name": "Vân's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 22 },
-  { "name": "Bà nội's birthday",            "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 23 },
-  { "name": "Kem's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 28 },
-  { "name": "Bi's birthday",                "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 4,  "day": 30 },
-  { "name": "Lê's birthday",                "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 5,  "day": 8  },
-  { "name": "Ông nội's birthday",           "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 7,  "day": 1  },
-  { "name": "Wedding anniversary",          "eventType": "anniversary",  "type": "solar", "repeat": "yearly", "month": 7,  "day": 16 },
-  { "name": "Ben's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 7,  "day": 24 },
-  { "name": "bác Nhung's birthday",         "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 7,  "day": 25 },
-  { "name": "bác Thắng's birthday",         "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 8,  "day": 13 },
-  { "name": "a Hiếu's birthday",            "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 10, "day": 17 },
-  { "name": "Bảo bối's birthday",           "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 10, "day": 24 },
-  { "name": "Alex's birthday",              "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 10, "day": 25 },
-  { "name": "Bon's birthday",               "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 11, "day": 12 },
-  { "name": "Tuân's birthday",              "eventType": "birthday",     "type": "solar", "repeat": "yearly", "month": 12, "day": 18 },
-  { "name": "Rằm tháng Giêng",             "eventType": "other",        "type": "lunar", "repeat": "yearly", "month": 1,  "day": 15 },
-  { "name": "Rằm tháng Bảy",              "eventType": "other",        "type": "lunar", "repeat": "yearly", "month": 7,  "day": 15 },
-  { "name": "Tết Trung Thu",               "eventType": "other",        "type": "lunar", "repeat": "yearly", "month": 8,  "day": 15 },
-  { "name": "Lễ Ông Táo",                  "eventType": "other",        "type": "lunar", "repeat": "yearly", "month": 12, "day": 23 },
-  { "name": "Wedding",                     "eventType": "anniversary",  "type": "solar", "repeat": "once",   "year": 2013, "month": 7, "day": 13 }
+  {
+    "name": "Bà ngoại's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 2,
+    "day": 7
+  },
+  {
+    "name": "Ngày Valentine",
+    "eventType": "other",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 2,
+    "day": 14
+  },
+  {
+    "name": "Cốm's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 2,
+    "day": 19
+  },
+  {
+    "name": "Bin's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 2,
+    "day": 27
+  },
+  {
+    "name": "Tây's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 3,
+    "day": 15
+  },
+  {
+    "name": "Ông ngoại's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 3,
+    "day": 23
+  },
+  {
+    "name": "Bob's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 3,
+    "day": 26
+  },
+  {
+    "name": "Thanh's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 4,
+    "day": 13
+  },
+  {
+    "name": "Vân's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 4,
+    "day": 22
+  },
+  {
+    "name": "Bà nội's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 4,
+    "day": 23
+  },
+  {
+    "name": "Kem's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 4,
+    "day": 28
+  },
+  {
+    "name": "Bi's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 4,
+    "day": 30
+  },
+  {
+    "name": "Lê's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 5,
+    "day": 8
+  },
+  {
+    "name": "Ông nội's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 7,
+    "day": 1
+  },
+  {
+    "name": "Wedding anniversary",
+    "eventType": "anniversary",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 7,
+    "day": 16
+  },
+  {
+    "name": "Ben's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 7,
+    "day": 24
+  },
+  {
+    "name": "bác Nhung's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 7,
+    "day": 25
+  },
+  {
+    "name": "bác Thắng's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 8,
+    "day": 13
+  },
+  {
+    "name": "a Hiếu's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 10,
+    "day": 17
+  },
+  {
+    "name": "Bảo bối's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 10,
+    "day": 24
+  },
+  {
+    "name": "Alex's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 10,
+    "day": 25
+  },
+  {
+    "name": "Bon's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 11,
+    "day": 12
+  },
+  {
+    "name": "Tuân's birthday",
+    "eventType": "birthday",
+    "type": "solar",
+    "repeat": "yearly",
+    "month": 12,
+    "day": 18
+  },
+  {
+    "name": "Rằm tháng Giêng",
+    "eventType": "other",
+    "type": "lunar",
+    "repeat": "yearly",
+    "month": 1,
+    "day": 15
+  },
+  {
+    "name": "Rằm tháng Bảy",
+    "eventType": "other",
+    "type": "lunar",
+    "repeat": "yearly",
+    "month": 7,
+    "day": 15
+  },
+  {
+    "name": "Tết Trung Thu",
+    "eventType": "other",
+    "type": "lunar",
+    "repeat": "yearly",
+    "month": 8,
+    "day": 15
+  },
+  {
+    "name": "Lễ Ông Táo",
+    "eventType": "other",
+    "type": "lunar",
+    "repeat": "yearly",
+    "month": 12,
+    "day": 23
+  },
+  {
+    "name": "Wedding",
+    "eventType": "anniversary",
+    "type": "solar",
+    "repeat": "once",
+    "month": 7,
+    "day": 16,
+    "year": 2013
+  }
 ]
