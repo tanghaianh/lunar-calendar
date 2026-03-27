@@ -11,14 +11,15 @@ import {
   THANG_TEN,
 } from '@/lib/lunar-calendar';
 
-const DOW = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+const DOW = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
 function daysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate(); // month is 1-based
 }
 
 function firstDayOfMonth(year: number, month: number) {
-  return new Date(year, month - 1, 1).getDay(); // 0 = Sunday
+  // Returns 0-based column index with Monday as column 0
+  return (new Date(year, month - 1, 1).getDay() + 6) % 7;
 }
 
 interface CalendarCell {
@@ -68,27 +69,14 @@ function buildCalendarCells(year: number, month: number): CalendarCell[] {
 }
 
 export default function LunarCalendar() {
-  const [now, setNow] = useState<Date | null>(null);
-  const [viewYear, setViewYear] = useState(0);
-  const [viewMonth, setViewMonth] = useState(0);
+  const [now, setNow] = useState(() => new Date());
+  const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(() => new Date().getMonth() + 1);
 
   useEffect(() => {
-    const current = new Date();
-    setNow(current);
-    setViewYear(current.getFullYear());
-    setViewMonth(current.getMonth() + 1);
-
     const interval = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(interval);
   }, []);
-
-  if (!now || viewYear === 0) {
-    return (
-      <div className="flex items-center justify-center h-64" style={{ color: '#c8302a' }}>
-        Đang tải...
-      </div>
-    );
-  }
 
   const todayD = now.getDate();
   const todayM = now.getMonth() + 1;
@@ -212,7 +200,7 @@ export default function LunarCalendar() {
         {/* Day-of-week headers */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginTop: 12, marginBottom: 4 }}>
           {DOW.map((d, i) => {
-            const color = i === 0 ? '#c8302a' : i === 6 ? '#1a6ac8' : '#888';
+            const color = i === 6 ? '#c8302a' : i === 5 ? '#1a6ac8' : '#888';
             return (
               <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 700, letterSpacing: 1, color, padding: '4px 0' }}>
                 {d}
@@ -226,8 +214,8 @@ export default function LunarCalendar() {
           {cells.map((cell, idx) => {
             const today = isToday(cell.solarDay, cell.solarMonth, cell.solarYear);
             const col = idx % 7;
-            const isSunday = col === 0;
-            const isSaturday = col === 6;
+            const isSunday = col === 6;
+            const isSaturday = col === 5;
             const isFirstLunarDay = cell.lunarDay === 1;
 
             let solarColor = '#ccc';
